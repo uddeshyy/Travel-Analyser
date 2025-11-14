@@ -1,0 +1,34 @@
+{
+  "Kharadi": {
+    "home_to_office": {
+      "min": null,
+      "max": null,
+      "avg": null,
+      "count": 0,
+      "total": 0
+    },
+    "office_to_home": {
+      "min": null,
+      "max": null,
+      "avg": null,
+      "count": 0,
+      "total": 0
+    }
+  },
+  "Keshav Nagar": {
+    "home_to_office": {
+      "min": null,
+      "max": null,
+      "avg": null,
+      "count": 0,
+      "total": 0
+    },
+    "office_to_home": {
+      "min": null,
+      "max": null,
+      "avg": null,
+      "count": 0,
+      "total": 0
+    }
+  }
+}
