@@ -8,9 +8,9 @@ API_KEY = os.getenv("GOOGLE_MAPS_KEY")
 
 # Correct coordinates (not URLs)
 LOC = {
-    "Kharadi": "18.555623,73.935181",
-    "Keshav Nagar": "18.542030,73.955960",
-    "Office": "18.567139,73.914689"
+    "Kharadi": "18.5376206,73.936613",
+    "Keshav Nagar": "18.5306004,73.9454019",
+    "Office": "18.5502336,73.8942478"
 }
 
 DATA_FILE = "data.json"
