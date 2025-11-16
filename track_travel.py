@@ -4,30 +4,34 @@ import requests
 from datetime import datetime
 import pytz
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_MAPS_KEY")
+API_KEY = os.getenv("GOOGLE_MAPS_KEY")
 
-LOCATIONS = {
-    "Kharadi": "https://maps.app.goo.gl/Pi2D1gHqti2KnEHi7",
-    "Keshav Nagar": "https://maps.app.goo.gl/ppPj8oV5NtmpYJCL8",
-    "Office": "https://maps.app.goo.gl/AeSGAWAALwTvWETK6"
+# Correct coordinates (not URLs)
+LOC = {
+    "Kharadi": "18.555623,73.935181",
+    "Keshav Nagar": "18.542030,73.955960",
+    "Office": "18.567139,73.914689"
 }
 
 DATA_FILE = "data.json"
 
+# Identify which cron ran (GitHub may delay, so use ranges)
+MORNING_RANGE = range(9, 13)     # Cron scheduled 10:15–10:35 (buffer allowed)
+EVENING_RANGE = range(16, 20)     # Cron scheduled 17:00–18:00 (buffer allowed)
+
+
+# ----------------------------- FILE HANDLING ----------------------------- #
+
 def load_data():
     if not os.path.exists(DATA_FILE):
-        return {
-            "Kharadi": {
-                "home_to_office": {"min": None, "max": None, "avg": None, "count": 0, "total": 0},
-                "office_to_home": {"min": None, "max": None, "avg": None, "count": 0, "total": 0}
-            },
-            "Keshav Nagar": {
-                "home_to_office": {"min": None, "max": None, "avg": None, "count": 0, "total": 0},
-                "office_to_home": {"min": None, "max": None, "avg": None, "count": 0, "total": 0}
-            }
-        }
+        with open(DATA_FILE, "w") as f:
+            json.dump({}, f, indent=2)
+
     with open(DATA_FILE, "r") as f:
-        return json.load(f)
+        try:
+            return json.load(f)
+        except:
+            return {}
 
 
 def save_data(data):
@@ -35,58 +39,99 @@ def save_data(data):
         json.dump(data, f, indent=2)
 
 
+# ----------------------------- API CALL ----------------------------- #
+
 def get_travel_time(origin, destination):
     url = (
-        f"https://maps.googleapis.com/maps/api/directions/json"
-        f"?origin={origin}&destination={destination}&key={GOOGLE_API_KEY}"
+        "https://maps.googleapis.com/maps/api/directions/json"
+        f"?origin={origin}&destination={destination}"
+        "&departure_time=now"
+        f"&key={API_KEY}"
     )
-    response = requests.get(url).json()
-    return response["routes"][0]["legs"][0]["duration"]["value"] / 60  # minutes
+
+    resp = requests.get(url).json()
+
+    try:
+        secs = resp["routes"][0]["legs"][0]["duration_in_traffic"]["value"]
+        return round(secs / 60)
+    except:
+        print("⚠️ API error:", resp)
+        return None
 
 
-def compute_3_sample_avg(origin, destination):
-    samples = [get_travel_time(origin, destination) for _ in range(3)]
-    return sum(samples) / len(samples)
+# ----------------------------- UPDATE DAILY DATA ----------------------------- #
+
+def record_sample(day_data, entry_key, value):
+    """
+    Accumulate samples until 3 are collected, then compute min/max/avg.
+    """
+
+    if entry_key not in day_data:
+        day_data[entry_key] = {
+            "samples": [],
+            "min": None,
+            "max": None,
+            "avg": None
+        }
+
+    entry = day_data[entry_key]
+
+    # Save sample only if valid
+    if value is not None:
+        entry["samples"].append(value)
+
+    # Compute stats when 3 samples are ready
+    if len(entry["samples"]) == 3:
+        s = entry["samples"]
+        entry["min"] = min(s)
+        entry["max"] = max(s)
+        entry["avg"] = round(sum(s) / 3)
+        entry["samples"] = []   # Clear samples after computing
 
 
-def update_stats(stats_dict, new_value):
-    if stats_dict["min"] is None or new_value < stats_dict["min"]:
-        stats_dict["min"] = new_value
-
-    if stats_dict["max"] is None or new_value > stats_dict["max"]:
-        stats_dict["max"] = new_value
-
-    stats_dict["count"] += 1
-    stats_dict["total"] += new_value
-    stats_dict["avg"] = stats_dict["total"] / stats_dict["count"]
-
+# ----------------------------- MAIN LOGIC ----------------------------- #
 
 def main():
-    now = datetime.now(pytz.timezone("Asia/Kolkata"))
+    ist = pytz.timezone("Asia/Kolkata")
+    now = datetime.now(ist)
+
     hour = now.hour
-    minute = now.minute
 
-    data = load_data()
-
-    # Determine which job is running
-    is_morning = (hour == 10 and minute in [15, 25, 35])
-    is_evening = ((hour == 17 and minute == 0) or (hour == 17 and minute == 30) or (hour == 18 and minute == 0))
+    # Determine which window this run belongs to
+    is_morning = hour in MORNING_RANGE
+    is_evening = hour in EVENING_RANGE
 
     if not (is_morning or is_evening):
-        print("Not a scheduled sample time.")
+        print("⏭ Not a relevant cron window. Skipping.")
         return
 
-    for home in ["Kharadi", "Keshav Nagar"]:
-        if is_morning:
-            avg_val = compute_3_sample_avg(LOCATIONS[home], LOCATIONS["Office"])
-            update_stats(data[home]["home_to_office"], avg_val)
+    # Load DB
+    db = load_data()
+    date_str = now.strftime("%Y-%m-%d")
 
-        if is_evening:
-            avg_val = compute_3_sample_avg(LOCATIONS["Office"], LOCATIONS[home])
-            update_stats(data[home]["office_to_home"], avg_val)
+    if date_str not in db:
+        db[date_str] = {}
 
-    save_data(data)
-    print("Updated data:", data)
+    today = db[date_str]
+
+    # ---------------- MORNING RUN ---------------- #
+    if is_morning:
+        print("🌅 Morning sample")
+
+        for home in ["Kharadi", "Keshav Nagar"]:
+            t = get_travel_time(LOC[home], LOC["Office"])
+            record_sample(today, f"{home}_to_office", t)
+
+    # ---------------- EVENING RUN ---------------- #
+    if is_evening:
+        print("🌇 Evening sample")
+
+        for home in ["Kharadi", "Keshav Nagar"]:
+            t = get_travel_time(LOC["Office"], LOC[home])
+            record_sample(today, f"office_to_{home}", t)
+
+    save_data(db)
+    print("✔ Data updated for", date_str)
 
 
 if __name__ == "__main__":
