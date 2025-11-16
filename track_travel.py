@@ -16,7 +16,7 @@ LOC = {
 DATA_FILE = "data.json"
 
 # Identify which cron ran (GitHub may delay, so use ranges)
-MORNING_RANGE = range(9, 13)     # Cron scheduled 10:15–10:35 (buffer allowed)
+MORNING_RANGE = range(9, 15)     # Cron scheduled 10:15–10:35 (buffer allowed)
 EVENING_RANGE = range(16, 20)     # Cron scheduled 17:00–18:00 (buffer allowed)
 
 
