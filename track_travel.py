@@ -23,15 +23,28 @@ EVENING_RANGE = range(16, 20)     # Cron scheduled 17:00–18:00 (buffer allowed
 # ----------------------------- FILE HANDLING ----------------------------- #
 
 def load_data():
+    # If file missing, create blank
     if not os.path.exists(DATA_FILE):
         with open(DATA_FILE, "w") as f:
             json.dump({}, f, indent=2)
 
-    with open(DATA_FILE, "r") as f:
-        try:
-            return json.load(f)
-        except:
-            return {}
+    # Load file content
+    try:
+        with open(DATA_FILE, "r") as f:
+            data = json.load(f)
+    except:
+        data = {}
+
+    # Ensure "global" is initialized
+    if "global" not in data:
+        data["global"] = {
+            "Kharadi_to_office": {"count": 0, "total": 0, "avg": None, "min": None, "max": None},
+            "office_to_Kharadi": {"count": 0, "total": 0, "avg": None, "min": None, "max": None},
+            "Keshav Nagar_to_office": {"count": 0, "total": 0, "avg": None, "min": None, "max": None},
+            "office_to_Keshav Nagar": {"count": 0, "total": 0, "avg": None, "min": None, "max": None}
+        }
+
+    return data
 
 
 def save_data(data):
@@ -61,11 +74,7 @@ def get_travel_time(origin, destination):
 
 # ----------------------------- UPDATE DAILY DATA ----------------------------- #
 
-def record_sample(day_data, entry_key, value):
-    """
-    Accumulate samples until 3 are collected, then compute min/max/avg.
-    """
-
+def record_sample(day_data, entry_key, value, global_stats):
     if entry_key not in day_data:
         day_data[entry_key] = {
             "samples": [],
@@ -76,17 +85,32 @@ def record_sample(day_data, entry_key, value):
 
     entry = day_data[entry_key]
 
-    # Save sample only if valid
     if value is not None:
         entry["samples"].append(value)
 
-    # Compute stats when 3 samples are ready
     if len(entry["samples"]) == 3:
         s = entry["samples"]
         entry["min"] = min(s)
         entry["max"] = max(s)
         entry["avg"] = round(sum(s) / 3)
-        entry["samples"] = []   # Clear samples after computing
+        entry["samples"] = []
+
+        # --- UPDATE GLOBAL STATS ---
+        g = global_stats[entry_key]
+
+        # Global min
+        if g["min"] is None or entry["avg"] < g["min"]:
+            g["min"] = entry["avg"]
+
+        # Global max
+        if g["max"] is None or entry["avg"] > g["max"]:
+            g["max"] = entry["avg"]
+
+        # Global avg
+        g["count"] += 1
+        g["total"] += entry["avg"]
+        g["avg"] = round(g["total"] / g["count"])
+
 
 
 # ----------------------------- MAIN LOGIC ----------------------------- #
@@ -120,7 +144,7 @@ def main():
 
         for home in ["Kharadi", "Keshav Nagar"]:
             t = get_travel_time(LOC[home], LOC["Office"])
-            record_sample(today, f"{home}_to_office", t)
+            record_sample(today, f"{home}_to_office", t, db["global"])
 
     # ---------------- EVENING RUN ---------------- #
     if is_evening:
@@ -128,7 +152,7 @@ def main():
 
         for home in ["Kharadi", "Keshav Nagar"]:
             t = get_travel_time(LOC["Office"], LOC[home])
-            record_sample(today, f"office_to_{home}", t)
+            record_sample(today, f"office_to_{home}", t, db["global"])
 
     save_data(db)
     print("✔ Data updated for", date_str)
