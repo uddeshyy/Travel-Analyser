@@ -51,22 +51,16 @@
   },
   "2025-11-17": {
     "Kharadi_to_office": {
-      "samples": [
-        22,
-        22
-      ],
-      "min": null,
-      "max": null,
-      "avg": null
+      "samples": [],
+      "min": 21,
+      "max": 22,
+      "avg": 22
     },
     "Keshav Nagar_to_office": {
-      "samples": [
-        29,
-        28
-      ],
-      "min": null,
-      "max": null,
-      "avg": null
+      "samples": [],
+      "min": 27,
+      "max": 29,
+      "avg": 28
     }
   }
 }
