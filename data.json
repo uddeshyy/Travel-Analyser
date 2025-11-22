@@ -1,80 +1,4 @@
 {
-  "Kharadi": {
-    "home_to_office": {
-      "min": null,
-      "max": null,
-      "avg": null,
-      "count": 0,
-      "total": 0
-    },
-    "office_to_home": {
-      "min": null,
-      "max": null,
-      "avg": null,
-      "count": 0,
-      "total": 0
-    }
-  },
-  "Keshav Nagar": {
-    "home_to_office": {
-      "min": null,
-      "max": null,
-      "avg": null,
-      "count": 0,
-      "total": 0
-    },
-    "office_to_home": {
-      "min": null,
-      "max": null,
-      "avg": null,
-      "count": 0,
-      "total": 0
-    }
-  },
-  "2025-11-16": {
-    "Kharadi_to_office": {
-      "samples": [
-        19
-      ],
-      "min": null,
-      "max": null,
-      "avg": null
-    },
-    "Keshav Nagar_to_office": {
-      "samples": [
-        22
-      ],
-      "min": null,
-      "max": null,
-      "avg": null
-    }
-  },
-  "2025-11-17": {
-    "Kharadi_to_office": {
-      "samples": [],
-      "min": 21,
-      "max": 22,
-      "avg": 22
-    },
-    "Keshav Nagar_to_office": {
-      "samples": [],
-      "min": 27,
-      "max": 29,
-      "avg": 28
-    },
-    "office_to_Kharadi": {
-      "samples": [],
-      "min": 28,
-      "max": 36,
-      "avg": 33
-    },
-    "office_to_Keshav Nagar": {
-      "samples": [],
-      "min": 33,
-      "max": 42,
-      "avg": 38
-    }
-  },
   "global": {
     "Kharadi_to_office": {
       "count": 4,
@@ -103,32 +27,6 @@
       "avg": 39,
       "min": 37,
       "max": 42
-    }
-  },
-  "2025-11-18": {
-    "Kharadi_to_office": {
-      "samples": [],
-      "min": 22,
-      "max": 22,
-      "avg": 22
-    },
-    "Keshav Nagar_to_office": {
-      "samples": [],
-      "min": 28,
-      "max": 30,
-      "avg": 29
-    },
-    "office_to_Kharadi": {
-      "samples": [],
-      "min": 28,
-      "max": 39,
-      "avg": 33
-    },
-    "office_to_Keshav Nagar": {
-      "samples": [],
-      "min": 32,
-      "max": 42,
-      "avg": 37
     }
   },
   "2025-11-19": {
