@@ -188,7 +188,8 @@
   "2025-11-27": {
     "Kharadi_to_office": {
       "samples": [
-        23
+        23,
+        22
       ],
       "min": null,
       "max": null,
@@ -196,7 +197,8 @@
     },
     "Keshav Nagar_to_office": {
       "samples": [
-        29
+        29,
+        28
       ],
       "min": null,
       "max": null,
