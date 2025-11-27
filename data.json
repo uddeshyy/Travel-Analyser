@@ -184,5 +184,23 @@
       "max": 48,
       "avg": 43
     }
+  },
+  "2025-11-27": {
+    "Kharadi_to_office": {
+      "samples": [
+        23
+      ],
+      "min": null,
+      "max": null,
+      "avg": null
+    },
+    "Keshav Nagar_to_office": {
+      "samples": [
+        29
+      ],
+      "min": null,
+      "max": null,
+      "avg": null
+    }
   }
 }
