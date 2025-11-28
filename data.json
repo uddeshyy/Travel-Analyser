@@ -1,9 +1,9 @@
 {
   "global": {
     "Kharadi_to_office": {
-      "count": 8,
-      "total": 173,
-      "avg": 22,
+      "count": 9,
+      "total": 193,
+      "avg": 21,
       "min": 20,
       "max": 22
     },
@@ -15,10 +15,10 @@
       "max": 36
     },
     "Keshav Nagar_to_office": {
-      "count": 8,
-      "total": 224,
+      "count": 9,
+      "total": 250,
       "avg": 28,
-      "min": 27,
+      "min": 26,
       "max": 29
     },
     "office_to_Keshav Nagar": {
@@ -213,22 +213,16 @@
   },
   "2025-11-28": {
     "Kharadi_to_office": {
-      "samples": [
-        20,
-        20
-      ],
-      "min": null,
-      "max": null,
-      "avg": null
+      "samples": [],
+      "min": 20,
+      "max": 20,
+      "avg": 20
     },
     "Keshav Nagar_to_office": {
-      "samples": [
-        26,
-        25
-      ],
-      "min": null,
-      "max": null,
-      "avg": null
+      "samples": [],
+      "min": 25,
+      "max": 26,
+      "avg": 26
     }
   }
 }
