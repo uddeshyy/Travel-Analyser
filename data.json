@@ -275,6 +275,22 @@
       "min": 27,
       "max": 31,
       "avg": 29
+    },
+    "office_to_Kharadi": {
+      "samples": [
+        30
+      ],
+      "min": null,
+      "max": null,
+      "avg": null
+    },
+    "office_to_Keshav Nagar": {
+      "samples": [
+        35
+      ],
+      "min": null,
+      "max": null,
+      "avg": null
     }
   }
 }
