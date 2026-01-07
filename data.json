@@ -954,7 +954,8 @@
     },
     "office_to_Kharadi": {
       "samples": [
-        30
+        30,
+        38
       ],
       "min": null,
       "max": null,
@@ -962,7 +963,8 @@
     },
     "office_to_Keshav Nagar": {
       "samples": [
-        37
+        37,
+        43
       ],
       "min": null,
       "max": null,
